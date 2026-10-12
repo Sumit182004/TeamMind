@@ -1180,14 +1180,10 @@ function App() {
                       </Typography>
 
                       <Typography
-                        className="output-text"
+                        className="output-text recommendation-title"
                         sx={{
                           whiteSpace: "pre-wrap",
                           overflowWrap: "anywhere",
-                          fontWeight: 400,
-                          fontSize: "13px",
-                          lineHeight: 1.8,
-                          color: "#cbd5e1",
                         }}
                       >
                         {formatOutput(
