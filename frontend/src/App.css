@@ -726,3 +726,42 @@ body {
   font-size: 13px !important;
   line-height: 1.7 !important;
 }
+
+/* Match hosted report text size with local */
+.report-panel .recommendation-card .recommendation-title {
+  font-size: 16px !important;
+  line-height: 1.75 !important;
+  font-weight: 600 !important;
+}
+
+.report-panel .recommendation-card .recommendation-reasoning,
+.report-panel .recommendation-card .output-text {
+  font-size: 14px !important;
+  line-height: 1.85 !important;
+  font-weight: 400 !important;
+}
+
+.report-panel .recommendation-card .report-heading {
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  font-weight: 700 !important;
+}
+
+.report-panel .recommendation-card .tradeoff-title {
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+  font-weight: 600 !important;
+}
+
+.report-panel .stress-test-panel,
+.report-panel .stress-test-content,
+.report-panel .stress-result-card {
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
+
+.report-panel .stress-result-title {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  font-weight: 700 !important;
+}

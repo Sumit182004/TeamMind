@@ -45,117 +45,108 @@ function parseAgentOutput(value: unknown): any {
   const cleaned = value
     .trim()
     .replace(/^```(?:json|markdown|md)?\s*/i, "")
-    .replace(/\s*```$/, "");
+    .replace(/\s*```$/i, "")
+    .replace(/&nbsp;/g, " ");
 
+  // Prefer structured JSON when the agent returns valid JSON.
   try {
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed;
+    }
   } catch {
-    const headingPattern =
-      /^(?:#{1,6}\s*)?(?:\d+[.)]\s*)?(.*?)[ \t]*$/gm;
-
-    const headings = [
-      {
-        key: "recommendation",
-        patterns: [/^recommendation(?: and reasoning)?$/i],
-      },
-      {
-        key: "tradeoffs",
-        patterns: [
-          /^comparison of all alternatives$/i,
-          /^options comparison$/i,
-          /^key trade-offs?$/i,
-          /^benefits and trade-offs$/i,
-        ],
-      },
-      {
-        key: "counterarguments",
-        patterns: [/^strongest counterargument$/i, /^counterarguments?$/i],
-      },
-      {
-        key: "uncertainties",
-        patterns: [
-          /^evidence gaps and uncertainties?$/i,
-          /^evidence gaps and uncertainty$/i,
-          /^uncertainties$/i,
-        ],
-      },
-      {
-        key: "next_steps",
-        patterns: [/^practical next steps$/i, /^next steps$/i],
-      },
-      {
-        key: "stress_test",
-        patterns: [/^stress-test scenarios and their results$/i],
-      },
-      {
-        key: "vulnerabilities",
-        patterns: [/^vulnerabilities and mitigations$/i],
-      },
-      {
-        key: "decision_triggers",
-        patterns: [/^decision triggers$/i],
-      },
-      {
-        key: "overall_assessment",
-        patterns: [/^overall assessment$/i],
-      },
-    ];
-
-    const lines = [...cleaned.matchAll(headingPattern)];
-    const sections: Record<string, string> = {};
-
-    for (let i = 0; i < lines.length; i++) {
-      const heading = lines[i][1].trim();
-      const matched = headings.find((item) =>
-        item.patterns.some((pattern) => pattern.test(heading))
-      );
-
-      if (!matched || lines[i].index == null) continue;
-
-      const start = lines[i].index + lines[i][0].length;
-      const nextHeading = lines
-        .slice(i + 1)
-        .find((line) => {
-          const text = line[1].trim();
-          return headings.some((item) =>
-            item.patterns.some((pattern) => pattern.test(text))
-          );
-        });
-
-      const end = nextHeading?.index ?? cleaned.length;
-      sections[matched.key] = cleaned.slice(start, end).trim();
-    }
-
-    if (sections.recommendation) {
-      const sectionOne = sections.recommendation;
-      const optionMatch = sectionOne.match(
-        /(?:recommended option|recommendation)\s*:\s*([^\n]+)/i
-      );
-
-      return {
-        recommendation: optionMatch
-          ? optionMatch[1].trim()
-          : sectionOne,
-        reasoning: optionMatch
-          ? sectionOne
-              .replace(optionMatch[0], "")
-              .trim()
-          : "",
-        tradeoffs: [
-          sections.tradeoffs,
-        ].filter(Boolean).join("\n\n"),
-        counterarguments: sections.counterarguments || "",
-        uncertainties: sections.uncertainties || "",
-        next_steps: sections.next_steps || "",
-        vulnerabilities: sections.vulnerabilities || "",
-        decision_triggers: sections.decision_triggers || "",
-        overall_assessment: sections.overall_assessment || "",
-        raw_markdown: cleaned,
-      };
-    }
-
-    return value;
+    // Continue and parse a numbered text report.
   }
+
+  const lines = cleaned.split(/\r?\n/);
+  const sections: Record<string, string[]> = {};
+  let currentSection = "recommendation";
+
+  const headingRules: Array<[string, RegExp]> = [
+    ["recommendation", /^(?:recommendation(?: and reasoning)?|decision report.*|recommended option.*)$/i],
+    ["tradeoffs", /^(?:comparison of all alternatives|comparison of alternatives|benefits and trade-offs|key trade-offs?)$/i],
+    ["counterarguments", /^(?:strongest counterargument|counterarguments?)$/i],
+    ["uncertainties", /^(?:evidence gaps and uncertainties?|uncertainties)$/i],
+    ["next_steps", /^(?:practical next steps|next steps)$/i],
+    ["stress_test", /^(?:stress-test scenarios(?: and their results)?|stress test results|decision stress test)$/i],
+    ["vulnerabilities", /^(?:vulnerabilities and mitigations|vulnerabilities and mitigation strategies|vulnerabilities)$/i],
+    ["decision_triggers", /^decision triggers$/i],
+    ["overall_assessment", /^overall assessment$/i],
+  ];
+
+  const normalizeHeading = (line: string) =>
+    line
+      .trim()
+      .replace(/^#{1,6}\s*/, "")
+      .replace(/^\d+[.)]\s*/, "")
+      .replace(/\*\*/g, "")
+      .replace(/:$/, "")
+      .trim();
+
+  for (const line of lines) {
+    const heading = normalizeHeading(line);
+    const match = headingRules.find(([, pattern]) => pattern.test(heading));
+
+    if (match) {
+      currentSection = match[0];
+      if (!sections[currentSection]) sections[currentSection] = [];
+      continue;
+    }
+
+    if (!sections[currentSection]) sections[currentSection] = [];
+    sections[currentSection].push(line);
+  }
+
+  const getSection = (key: string) =>
+    (sections[key] || []).join("\n").trim();
+
+  const recommendationText = getSection("recommendation");
+  const optionMatch = recommendationText.match(
+    /recommended option\s*:\s*([^\n]+)/i
+  );
+
+  // Keep the recommendation concise and move its explanation to reasoning.
+  const recommendation = optionMatch
+    ? optionMatch[1].trim()
+    : recommendationText
+        .replace(/^decision report:.*$/im, "")
+        .replace(/^recommendation and reasoning\s*$/im, "")
+        .trim()
+        .split(/\n\s*\n/)[0]
+        ?.trim() || "No recommendation available.";
+
+  const reasoning = optionMatch
+    ? recommendationText
+        .replace(optionMatch[0], "")
+        .replace(/^decision report:.*$/im, "")
+        .replace(/^recommendation and reasoning\s*$/im, "")
+        .trim()
+    : "";
+
+  const tradeoffs: Record<string, string> = {};
+
+  const comparison = getSection("tradeoffs");
+  if (comparison) {
+    tradeoffs["Comparison and trade-offs"] = comparison;
+  }
+
+  const counterarguments = getSection("counterarguments");
+  const uncertainties = getSection("uncertainties");
+  const nextSteps = getSection("next_steps");
+
+  return {
+    recommendation,
+    reasoning,
+    tradeoffs,
+    counterarguments,
+    uncertainties,
+    next_steps: nextSteps,
+    vulnerabilities: getSection("vulnerabilities"),
+    decision_triggers: getSection("decision_triggers"),
+    overall_assessment: getSection("overall_assessment"),
+    raw_markdown: cleaned,
+  };
 }
 
 function humanizeKey(value: string): string {
