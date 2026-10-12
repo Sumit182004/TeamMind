@@ -177,10 +177,6 @@ function App() {
   const [omiSegments, setOmiSegments] = useState<Record<string, OmiSegment[]>>({});
   const [selectedSegmentIds, setSelectedSegmentIds] = useState<Record<string, string[]>>({});
   const [segmentsLoading, setSegmentsLoading] = useState(false);
-  const [expandedOmiSession, setExpandedOmiSession] =
-  useState<string | null>(null);
-  const [selectedOmiSession, setSelectedOmiSession] =
-  useState<string | null>(null);
 
   async function refreshDecisions() {
     const data = await getDecisions();
