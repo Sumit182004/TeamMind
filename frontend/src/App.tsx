@@ -1136,13 +1136,25 @@ function App() {
                         RECOMMENDATION
                       </Typography>
 
-                      <Typography className="recommendation-title">
+                      <Typography
+                        className="output-text"
+                        sx={{
+                          whiteSpace: "pre-wrap",
+                          overflowWrap: "anywhere",
+                          fontWeight: 400,
+                          fontSize: "13px",
+                          lineHeight: 1.8,
+                          color: "#cbd5e1",
+                        }}
+                      >
                         {formatOutput(
                           recommendation?.recommendation ??
                             (typeof parsedReport === "string"
                               ? parsedReport
                               : "No recommendation available.")
-                        )}
+                        )
+                          .replace(/\*\*/g, "")
+                          .replace(/^#{1,6}\s+/gm, "")}
                       </Typography>
 
                       {recommendation?.reasoning && (
