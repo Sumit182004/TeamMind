@@ -765,3 +765,93 @@ body {
   line-height: 1.6 !important;
   font-weight: 700 !important;
 }
+
+
+/* Decision section: slightly larger, more readable text */
+.decision-title,
+.decision-item .MuiTypography-h6 {
+  font-size: 16px !important;
+  line-height: 1.7 !important;
+}
+
+.decision-problem,
+.decision-item .MuiTypography-body2 {
+  font-size: 14px !important;
+  line-height: 1.85 !important;
+}
+
+.decision-options,
+.decision-item .MuiTypography-root {
+  line-height: 1.8 !important;
+}
+
+/* Create Decision form labels and inputs */
+.MuiInputBase-input,
+.MuiInputBase-inputMultiline {
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
+
+.MuiInputLabel-root {
+  font-size: 14px !important;
+}
+
+/* Omi transcript and conversation text */
+.omi-live-capture p,
+.omi-session-card,
+.omi-segment-card {
+  font-size: 14px !important;
+  line-height: 1.85 !important;
+}
+
+
+/* Agent Outputs: slightly larger and easier to read */
+.report-panel .agent-output-content,
+.report-panel .agent-output-content .output-text {
+  font-size: 14px !important;
+  line-height: 1.85 !important;
+  overflow-wrap: anywhere;
+}
+
+.report-panel .agent-output-content .MuiTypography-root {
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+/* Trade-offs: separate cards like the reference screenshot */
+.report-panel .report-section {
+  margin-top: 18px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #303d54;
+}
+
+.report-panel .tradeoff-item {
+  background: #141d30 !important;
+  border: 1px solid #35445f !important;
+  border-radius: 12px !important;
+  padding: 15px 16px !important;
+  margin-top: 12px !important;
+  box-sizing: border-box;
+}
+
+.report-panel .tradeoff-title {
+  color: #f1f5ff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1.6 !important;
+  margin-bottom: 6px !important;
+}
+
+.report-panel .tradeoff-item .output-text {
+  color: #d5deee !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
+
+/* Keep report headings clear */
+.report-panel .report-heading {
+  color: #72e3f3 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  margin-bottom: 10px !important;
+}
