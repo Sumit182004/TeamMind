@@ -3,4 +3,4 @@ uvicorn[standard]
 requests
 qdrant-client
 python-dotenv
-lyzr
+lyzr-adk
