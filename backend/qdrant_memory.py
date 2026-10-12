@@ -4,8 +4,8 @@ import uuid
 from pathlib import Path
 
 from dotenv import load_dotenv
+from fastembed import TextEmbedding
 from qdrant_client import QdrantClient, models
-
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
@@ -14,16 +14,22 @@ QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
 COLLECTION_NAME = "teammind_memories"
 MODEL_NAME = "BAAI/bge-small-en-v1.5"
+VECTOR_SIZE = 384
 
 if not QDRANT_URL or not QDRANT_API_KEY:
-    raise RuntimeError(
-        "Set QDRANT_URL and QDRANT_API_KEY in backend/.env"
-    )
+    raise RuntimeError("Set QDRANT_URL and QDRANT_API_KEY in environment variables.")
 
 client = QdrantClient(
     url=QDRANT_URL,
     api_key=QDRANT_API_KEY,
 )
+
+# Generate embeddings locally in the backend.
+embedder = TextEmbedding(model_name=MODEL_NAME)
+
+
+def embed_text(text: str) -> list[float]:
+    return next(iter(embedder.embed([text]))).tolist()
 
 
 def ensure_collection():
@@ -31,44 +37,44 @@ def ensure_collection():
         client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=models.VectorParams(
-                size=client.get_embedding_size(MODEL_NAME),
+                size=VECTOR_SIZE,
                 distance=models.Distance.COSINE,
             ),
         )
 
 
 def save_memory(text: str, metadata: dict) -> str:
-    """Embed and save a decision memory in Qdrant."""
-    memory_id = str(uuid.uuid4())
+    """Generate an embedding and save a memory in Qdrant Cloud."""
+    ensure_collection()
 
-    client.upload_collection(
+    memory_id = str(uuid.uuid4())
+    vector = embed_text(text)
+
+    client.upsert(
         collection_name=COLLECTION_NAME,
-        vectors=[
-            models.Document(
-                text=text,
-                model=MODEL_NAME,
+        points=[
+            models.PointStruct(
+                id=memory_id,
+                vector=vector,
+                payload={
+                    "document": text,
+                    **metadata,
+                },
             )
         ],
-        payload=[
-            {
-                "document": text,
-                **metadata,
-            }
-        ],
-        ids=[memory_id],
+        wait=True,
     )
 
     return memory_id
 
 
 def search_memories(query: str, limit: int = 3) -> list[dict]:
-    """Find memories semantically related to a query."""
+    """Retrieve semantically similar memories from Qdrant."""
+    ensure_collection()
+
     results = client.query_points(
         collection_name=COLLECTION_NAME,
-        query=models.Document(
-            text=query,
-            model=MODEL_NAME,
-        ),
+        query=embed_text(query),
         limit=limit,
         with_payload=True,
     ).points
@@ -77,10 +83,10 @@ def search_memories(query: str, limit: int = 3) -> list[dict]:
         {
             "id": str(point.id),
             "score": point.score,
-            "document": point.payload.get("document", ""),
+            "document": (point.payload or {}).get("document", ""),
             "metadata": {
                 key: value
-                for key, value in point.payload.items()
+                for key, value in (point.payload or {}).items()
                 if key != "document"
             },
         }
