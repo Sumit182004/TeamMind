@@ -4,3 +4,4 @@ requests
 qdrant-client
 python-dotenv
 lyzr-adk
+fastembed
