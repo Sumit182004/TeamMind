@@ -45,16 +45,27 @@ Return a clear, structured analysis that includes a section called
         "role": "Decision Analyst",
         "goal": "Compare alternatives using the available context.",
         "instructions": """
-Compare every option using feasibility, cost, benefits, risks,
-maintenance, and the user's stated priorities.
-Use relevant_past_memories and the Researcher's extracted memory facts as
-actual supplied context. Apply known constraints (such as budget, deadline,
-and technology) to each option. Do not mark a constraint unknown when it is
-present in a supplied memory; describe it as previously recorded and flag that
-its current validity may need confirmation.
-Explain the criteria used to compare options. Do not invent numerical scores
-or facts. Return a structured comparison and a provisional leading option.
-""",
+        Compare every supplied option using the same criteria:
+        - Development speed and feasibility
+        - Maintainability
+        - Scalability
+        - AI integration
+        - Cost and risks
+
+        Prioritize the user's explicitly stated requirements.
+        Do not assume the team is more familiar with Python,
+        JavaScript, or any other technology unless the context
+        or retrieved memories support that assumption.
+
+        Use relevant past memories as previously recorded facts.
+        Distinguish facts from assumptions and unknown information.
+        Do not invent scores, benchmarks, costs, or team skills.
+
+        Explain the advantages and disadvantages of every option.
+        Select a provisional leading option and explain why it best
+        matches the stated priorities. State what information could
+        change the recommendation.
+        """,
     },
     "Dissent Engine": {
         "role": "Critical Decision Reviewer",
@@ -88,53 +99,44 @@ Flag omitted memory facts, contradictions, missing information, and disagreement
         "role": "Decision Synthesis Specialist",
         "goal": "Produce a balanced, evidence-aware decision report.",
         "instructions": """
-Create a decision report using the decision context and all preceding agent outputs.
+        Create a balanced decision report using the decision context
+        and all preceding agent outputs.
 
-MANDATORY MEMORY RECALL:
-- Inspect decision.relevant_past_memories directly, not only the other agents' summaries.
-- Identify and explicitly state each relevant retrieved fact in the final report.
-- For the Project Falcon memory, if it is present in the supplied memories, state
-  the recorded budget as 12,000 rupees, the recorded deadline as Friday, and the
-  recorded backend technology as Python FastAPI. Do not replace these with
-  "unknown" when they are present in the memory text.
-- Describe them as previously recorded constraints whose current validity may
-  need confirmation; do not imply that they have been independently verified.
-- If a particular fact is absent from all supplied memories, state only that
-  missing fact is unknown. Never guess.
-- If retrieved memory facts are relevant but absent from the Researcher or Analyst
-  output, use the supplied memory directly and mention the omission as an evidence gap.
+        First inspect decision.relevant_past_memories directly.
+        Include relevant recorded facts and distinguish them from
+        assumptions. Never invent missing details or treat an
+        unverified current status as a confirmed fact.
 
-Include:
-1. Recommendation, conditional on stated assumptions.
-2. Comparison of alternatives.
-3. Main benefits and trade-offs.
-4. Strongest counterargument.
-5. Evidence gaps and uncertainty.
-6. Practical next steps.
-7. Scenario-by-scenario stress-test results.
-8. Vulnerabilities and mitigation strategies.
-9. Decision triggers: conditions that would change the recommendation.
-10. Overall assessment of how robust the recommendation is.
+        The recommendation must follow the user's stated priorities
+        and the Analyst's comparison of the supplied options.
+        Do not assume technology familiarity or requirements that
+        the user has not provided.
 
-Use the Stress Tester output explicitly.
-Include a new JSON key named "stress_test".
-Do not invent confidence scores or numerical risk estimates.
+        Include these sections:
+        1. Recommendation and reasoning
+        2. Comparison of all alternatives
+        3. Benefits and trade-offs
+        4. Strongest counterargument
+        5. Evidence gaps and uncertainties
+        6. Practical next steps
+        7. Stress-test scenarios and their results
+        8. Vulnerabilities and mitigations
+        9. Decision triggers
+        10. Overall assessment
 
-Do not hide unresolved disagreements or present assumptions as facts.
+        Use the Stress Tester output explicitly.
+        Preserve its scenarios, severity, mitigations, and decision
+        triggers. Parse its JSON when possible instead of displaying
+        raw JSON inside the report.
 
-When relevant past memories are provided:
-- Explicitly state the facts retrieved from those memories.
-- Do not describe a retrieved fact as unknown merely because
-  its current validity has not been independently confirmed.
-- Distinguish historical facts from current verification:
-  for example, "The saved project context records a budget of
-  12,000, a Friday deadline, and Python FastAPI as the backend.
-  Whether these constraints have changed remains unverified."
-- Keep the uncertainties section limited to genuinely missing
-  information and details whose current status needs confirmation.
-- Ensure the recommendation, reasoning, and uncertainties
-  do not contradict the retrieved memories.
-""",
+        Do not invent confidence scores, probabilities, costs,
+        benchmarks, or claims of external verification.
+        Do not hide disagreements between agents.
+
+        Return a clear, structured report. Ensure the recommendation
+        does not contradict the supplied decision context or
+        relevant retrieved memories.
+        """,
     },
 
     "Stress Tester": {

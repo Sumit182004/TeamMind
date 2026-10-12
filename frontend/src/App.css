@@ -515,3 +515,89 @@ body {
     padding: 16px !important;
   }
 }
+
+
+/* FINAL READABILITY PATCH: Omi transcript, imported transcript, report, and controls */
+.omi-live-capture,
+.omi-live-capture *,
+.omi-live-capture .MuiTypography-root,
+.omi-live-capture .MuiInputBase-root,
+.omi-live-capture .MuiInputBase-input,
+.omi-live-capture textarea,
+.omi-live-capture p,
+.omi-live-capture span,
+.omi-live-capture label,
+.report-panel,
+.report-panel *,
+.report-panel .MuiTypography-root,
+.report-panel .MuiButton-root,
+.report-panel .MuiIconButton-root {
+  color: #edf2ff;
+}
+
+.omi-live-capture .MuiInputBase-input,
+.omi-live-capture textarea,
+.omi-live-capture .MuiOutlinedInput-root {
+  background-color: #0b1220 !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+
+.omi-live-capture .MuiOutlinedInput-notchedOutline {
+  border-color: #34415a !important;
+}
+
+.omi-live-capture input::placeholder,
+.omi-live-capture textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+/* Ensure all action buttons remain readable, including disabled states. */
+.primary-button,
+.MuiButton-root.primary-button {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: linear-gradient(100deg, #6665ed, #4d87ed) !important;
+}
+
+.MuiButton-root:not(.primary-button) {
+  color: #c7d2fe !important;
+  -webkit-text-fill-color: #c7d2fe !important;
+}
+
+.MuiButton-root.Mui-disabled,
+.MuiButton-root:disabled {
+  color: #aab6cc !important;
+  -webkit-text-fill-color: #aab6cc !important;
+  background-color: #202b40 !important;
+  opacity: 1 !important;
+}
+
+.report-panel .MuiButton-root,
+.report-panel .MuiIconButton-root {
+  color: #c7d2fe !important;
+  -webkit-text-fill-color: #c7d2fe !important;
+}
+
+.report-panel .recommendation-title {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+  line-height: 1.6 !important;
+}
+
+.report-panel .recommendation-reasoning,
+.report-panel .output-text,
+.report-panel .MuiTypography-root {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* Omi segment text can contain transcript text rendered in nested elements. */
+.omi-live-capture .segment-text,
+.omi-live-capture .transcript-text,
+.omi-live-capture .MuiListItemText-primary,
+.omi-live-capture .MuiListItemText-secondary {
+  color: #edf2ff !important;
+}
