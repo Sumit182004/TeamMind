@@ -1,0 +1,517 @@
+
+:root {
+  font-family: Inter, "Segoe UI", sans-serif;
+  color: #edf2ff;
+  background: #080d18;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(ellipse at 10% 0%, #172443 0%, transparent 38%),
+    #080d18;
+}
+
+.app-shell {
+  min-height: 100vh;
+  color: #edf2ff;
+}
+
+.topbar {
+  border-bottom: 1px solid #1e2a3d;
+  background: rgba(8, 13, 24, 0.9);
+}
+
+.topbar-inner {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 78px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  color: white;
+  font-size: 23px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7771ff, #29c7dc);
+}
+
+.brand-name {
+  color: #f3f6ff;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+}
+
+.brand-subtitle {
+  color: #8998b3;
+  font-size: 11px !important;
+}
+
+.header-chip {
+  background: #18263a !important;
+  color: #74dfed !important;
+  letter-spacing: 1px;
+  font-size: 10px !important;
+}
+
+.main-content {
+  padding-top: 46px;
+  padding-bottom: 32px;
+}
+
+.hero {
+  margin-bottom: 34px;
+}
+
+.eyebrow,
+.section-label {
+  color: #65d4e8 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.6px !important;
+}
+
+.hero-title {
+  margin-top: 14px !important;
+  font-size: clamp(34px, 5vw, 54px) !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  letter-spacing: -1.8px !important;
+}
+
+.hero-title span {
+  color: #7b83ff;
+}
+
+.hero-description {
+  max-width: 630px;
+  margin-top: 16px !important;
+  color: #9aa8c1;
+  line-height: 1.8 !important;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.panel {
+  padding: 25px;
+  color: #edf2ff !important;
+  border: 1px solid #253147;
+  border-radius: 18px !important;
+  background: rgba(15, 23, 39, 0.92) !important;
+}
+
+.panel-title {
+  margin-top: 8px !important;
+  color: #edf2ff;
+  font-size: 19px !important;
+  font-weight: 750 !important;
+}
+
+.muted {
+  color: #91a0ba !important;
+  line-height: 1.7 !important;
+  overflow-wrap: anywhere;
+}
+
+.decision-item {
+  padding: 15px;
+  border: 1px solid #28354a;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.decision-item:hover,
+.decision-item.selected {
+  border-color: #666ef1;
+  background: #151f35;
+}
+
+.decision-title,
+.agent-name {
+  color: #edf2ff !important;
+  font-weight: 700 !important;
+}
+
+.decision-problem {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  color: #9aa8c1 !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.agent-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 12px;
+  border: 1px solid #253147;
+  border-radius: 12px;
+  background: #111a2a;
+}
+
+.agent-number {
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #24274b;
+  color: #a6a5ff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.agent-status {
+  background: #1c2d40 !important;
+  color: #a3bbd6 !important;
+  font-size: 10px !important;
+}
+
+.primary-button {
+  min-height: 44px;
+  background: linear-gradient(100deg, #6665ed, #4d87ed) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+}
+
+.primary-button:hover {
+  filter: brightness(1.1);
+}
+
+.report-panel {
+  min-height: 220px;
+}
+
+.output-box {
+  padding: 16px;
+  color: #dfe7f7 !important;
+  border: 1px solid #29364b;
+  border-radius: 12px !important;
+  background: #0b1220 !important;
+}
+
+.output-text {
+  color: #b8c5da;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.75 !important;
+  font-size: 13px !important;
+}
+
+.footer {
+  margin-top: 35px !important;
+  text-align: center;
+  color: #63738f;
+  font-size: 11px !important;
+}
+
+.MuiInputLabel-root {
+  color: #94a4bf !important;
+}
+
+.MuiOutlinedInput-root {
+  color: #edf2ff !important;
+  background: #0b1220;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: #2c3a50 !important;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #7478e8 !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .main-content {
+    padding-top: 28px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .header-chip {
+    display: none !important;
+  }
+
+  .hero-title {
+    letter-spacing: -1px !important;
+  }
+}
+
+/* Structured decision report */
+.recommendation-card .recommendation-reasoning {
+  color: #cbd5e1 !important;
+}
+
+.recommendation-card .report-heading {
+  color: #67e8f9 !important;
+}
+
+.recommendation-card .tradeoff-item {
+  background: #0b1220 !important;
+  border-color: #34415a !important;
+}
+
+.recommendation-card .tradeoff-title {
+  color: #f1f5f9 !important;
+}
+
+.recommendation-card .output-text {
+  color: #cbd5e1 !important;
+}
+
+.recommendation-title {
+  margin-top: 12px !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+  color: #a5b4fc;
+}
+
+.recommendation-reasoning {
+  margin-top: 12px !important;
+  line-height: 1.8 !important;
+  color: #cbd5e1;
+}
+
+.report-section {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #34415a;
+}
+
+.report-heading {
+  margin-bottom: 10px !important;
+  font-weight: 700 !important;
+  color: #67e8f9;
+}
+
+.tradeoff-item {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #34415a;
+  border-radius: 10px;
+  background: #111827;
+}
+
+.tradeoff-title {
+  margin-bottom: 6px !important;
+  font-weight: 600 !important;
+  color: #e2e8f0;
+}
+
+/* Collapsible agent outputs */
+.agent-output {
+  margin-top: 10px;
+  border: 1px solid #2b3850;
+  border-radius: 12px;
+  background: #101827;
+  overflow: hidden;
+}
+
+.agent-output-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.agent-output-summary::-webkit-details-marker {
+  display: none;
+}
+
+.agent-output-summary:hover {
+  background: #192338;
+}
+
+.agent-output-content {
+  padding: 16px;
+  border-top: 1px solid #2b3850;
+}
+
+.agent-output-content .output-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.75;
+}
+
+.stress-output {
+  border-color: #8b80ff;
+}
+
+.stress-output .agent-name {
+  color: #a5b4fc;
+}
+
+/* Prevent long text from breaking dashboard panels */
+.output-box,
+.report-panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.decision-problem {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Keep report content readable without excessive visual weight */
+.report-panel {
+  min-width: 0;
+}
+
+.recommendation-card {
+  max-width: 100%;
+}
+
+.agent-output {
+  max-width: 100%;
+}
+
+.agent-output-content {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.agent-output-content pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .recommendation-card {
+    padding: 18px;
+  }
+}
+
+
+/* Dedicated Decision Stress Test */
+.stress-test-panel {
+  margin-top: 22px;
+  padding: 22px;
+  border: 1px solid #706bf0;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #171e36, #101827);
+  min-width: 0;
+}
+
+.stress-test-panel .panel-title {
+  color: #f1f5ff !important;
+}
+
+.stress-test-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.stress-result-card {
+  padding: 15px;
+  border: 1px solid #303d56;
+  border-radius: 12px;
+  background: #0b1220;
+  min-width: 0;
+}
+
+.stress-result-title {
+  margin-bottom: 8px !important;
+  color: #a5b4fc !important;
+  font-weight: 700 !important;
+}
+
+.stress-result-card .output-text {
+  color: #cbd5e1 !important;
+  overflow-wrap: anywhere;
+}
+
+
+/* UI fixes: keep Omi transcripts and the Decision Intelligence report readable
+   in the existing dark TeamMind layout. */
+.omi-live-capture,
+.omi-live-capture .MuiPaper-root,
+.report-panel .MuiPaper-root,
+.report-panel .recommendation-card,
+.report-panel .tradeoff-item,
+.report-panel .stress-result-card,
+.report-panel .agent-output,
+.report-panel .agent-output-content {
+  color: #edf2ff !important;
+  background-color: #0b1220 !important;
+  border-color: #34415a !important;
+}
+
+.report-panel .recommendation-card {
+  padding: 22px !important;
+  border-radius: 14px !important;
+}
+
+.report-panel .recommendation-title,
+.report-panel .recommendation-reasoning,
+.report-panel .report-heading,
+.report-panel .tradeoff-title,
+.report-panel .output-text,
+.report-panel .agent-name {
+  color: #edf2ff !important;
+}
+
+.report-panel .report-heading {
+  color: #67e8f9 !important;
+}
+
+.report-panel .output-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.report-panel .MuiAlert-root {
+  background: #123327 !important;
+  color: #b9f6d0 !important;
+}
+
+.report-panel .MuiAlert-icon {
+  color: #6ee7a0 !important;
+}
+
+@media (max-width: 900px) {
+  .report-panel .recommendation-card {
+    padding: 16px !important;
+  }
+}
