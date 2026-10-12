@@ -50,58 +50,110 @@ function parseAgentOutput(value: unknown): any {
   try {
     return JSON.parse(cleaned);
   } catch {
-    // Some model responses are Markdown rather than the requested JSON.
-    // Convert known report headings into the same shape the report UI expects,
-    // so the full Markdown document is never shown as the recommendation.
-    const extractSection = (patterns: RegExp[]) => {
-      for (const pattern of patterns) {
-        const match = cleaned.match(pattern);
-        if (match?.[1]) {
-          return match[1]
-            .trim()
-            .replace(/^```(?:json)?\s*/i, "")
-            .replace(/\s*```$/, "")
-            .trim();
-        }
-      }
-      return "";
-    };
+    const headingPattern =
+      /^(?:#{1,6}\s*)?(?:\d+[.)]\s*)?(.*?)[ \t]*$/gm;
 
-    const recommendation = extractSection([
-      /(?:^|\n)\s*#{1,4}\s*Recommendation\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-    ]);
-    const keyFacts = extractSection([
-      /(?:^|\n)\s*#{1,4}\s*Key Facts from Memory\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-    ]);
-    const tradeoffs = extractSection([
-      /(?:^|\n)\s*#{1,4}\s*Options Comparison\s*\n+([\s\S]*?)(?=\n\s*#{1,2}\s+|$)/i,
-      /(?:^|\n)\s*#{1,4}\s*Key trade-offs\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-    ]);
-    const counterarguments = extractSection([
-      /(?:^|\n)\s*#{1,4}\s*Counterarguments?\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-      /(?:^|\n)\s*#{1,4}\s*Strongest counterargument\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-    ]);
-    const uncertainties = extractSection([
-      /(?:^|\n)\s*#{1,4}\s*(?:Evidence Gaps and Uncertainty|Uncertainties)\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-    ]);
-    const nextSteps = extractSection([
-      /(?:^|\n)\s*#{1,4}\s*Practical Next Steps\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-      /(?:^|\n)\s*#{1,4}\s*Next steps\s*\n+([\s\S]*?)(?=\n\s*#{1,4}\s+|$)/i,
-    ]);
+    const headings = [
+      {
+        key: "recommendation",
+        patterns: [/^recommendation(?: and reasoning)?$/i],
+      },
+      {
+        key: "tradeoffs",
+        patterns: [
+          /^comparison of all alternatives$/i,
+          /^options comparison$/i,
+          /^key trade-offs?$/i,
+          /^benefits and trade-offs$/i,
+        ],
+      },
+      {
+        key: "counterarguments",
+        patterns: [/^strongest counterargument$/i, /^counterarguments?$/i],
+      },
+      {
+        key: "uncertainties",
+        patterns: [
+          /^evidence gaps and uncertainties?$/i,
+          /^evidence gaps and uncertainty$/i,
+          /^uncertainties$/i,
+        ],
+      },
+      {
+        key: "next_steps",
+        patterns: [/^practical next steps$/i, /^next steps$/i],
+      },
+      {
+        key: "stress_test",
+        patterns: [/^stress-test scenarios and their results$/i],
+      },
+      {
+        key: "vulnerabilities",
+        patterns: [/^vulnerabilities and mitigations$/i],
+      },
+      {
+        key: "decision_triggers",
+        patterns: [/^decision triggers$/i],
+      },
+      {
+        key: "overall_assessment",
+        patterns: [/^overall assessment$/i],
+      },
+    ];
 
-    if (recommendation) {
+    const lines = [...cleaned.matchAll(headingPattern)];
+    const sections: Record<string, string> = {};
+
+    for (let i = 0; i < lines.length; i++) {
+      const heading = lines[i][1].trim();
+      const matched = headings.find((item) =>
+        item.patterns.some((pattern) => pattern.test(heading))
+      );
+
+      if (!matched || lines[i].index == null) continue;
+
+      const start = lines[i].index + lines[i][0].length;
+      const nextHeading = lines
+        .slice(i + 1)
+        .find((line) => {
+          const text = line[1].trim();
+          return headings.some((item) =>
+            item.patterns.some((pattern) => pattern.test(text))
+          );
+        });
+
+      const end = nextHeading?.index ?? cleaned.length;
+      sections[matched.key] = cleaned.slice(start, end).trim();
+    }
+
+    if (sections.recommendation) {
+      const sectionOne = sections.recommendation;
+      const optionMatch = sectionOne.match(
+        /(?:recommended option|recommendation)\s*:\s*([^\n]+)/i
+      );
+
       return {
-        recommendation,
-        reasoning: keyFacts || "",
-        tradeoffs,
-        counterarguments,
-        uncertainties,
-        next_steps: nextSteps,
+        recommendation: optionMatch
+          ? optionMatch[1].trim()
+          : sectionOne,
+        reasoning: optionMatch
+          ? sectionOne
+              .replace(optionMatch[0], "")
+              .trim()
+          : "",
+        tradeoffs: [
+          sections.tradeoffs,
+        ].filter(Boolean).join("\n\n"),
+        counterarguments: sections.counterarguments || "",
+        uncertainties: sections.uncertainties || "",
+        next_steps: sections.next_steps || "",
+        vulnerabilities: sections.vulnerabilities || "",
+        decision_triggers: sections.decision_triggers || "",
+        overall_assessment: sections.overall_assessment || "",
         raw_markdown: cleaned,
       };
     }
 
-    // Preserve ordinary non-report agent text as-is.
     return value;
   }
 }
@@ -1152,9 +1204,7 @@ function App() {
                             (typeof parsedReport === "string"
                               ? parsedReport
                               : "No recommendation available.")
-                        )
-                          .replace(/\*\*/g, "")
-                          .replace(/^#{1,6}\s+/gm, "")}
+                        )}
                       </Typography>
 
                       {recommendation?.reasoning && (
